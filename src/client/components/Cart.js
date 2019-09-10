@@ -1,4 +1,7 @@
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import PropTypes from "prop-types";
@@ -7,37 +10,77 @@ import { connect } from "react-redux";
 
 import CartItem from "./CartItem";
 
+const useStyles = makeStyles(theme => ({
+  container: {
+    display: "grid",
+    gridTemplateColumns: "repeat(12, 1fr)",
+    gridGap: theme.spacing(3)
+  },
+  confirm: {
+    backgroundColor: "#f2ca66"
+  },
+  paper: {
+    padding: theme.spacing(1),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+    whiteSpace: "nowrap",
+    marginBottom: theme.spacing(1)
+  },
+  root: {
+    width: "100%"
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular
+  }
+}));
+
 const Cart = props => {
   const { cart, removeFromCart, toggleView, total, updateCart } = props;
+  const classes = useStyles();
   return (
-    <>
-      <h1>Cart Items</h1>
-      <List>
-        {cart && cart.length
-          ? cart.map(product => (
-              <ListItem key={product.cartItemID}>
-                <CartItem
-                  data={product}
-                  onRemoveFromCart={removeFromCart}
-                  onUpdateCart={(item, id) => updateCart(item, id)}
-                />
-              </ListItem>
-            ))
-          : "Cart Empty"}
-      </List>
-      {cart.length ? (
-        <>
-          <h1>Total ${total} (Before Tax and Shipping)</h1>{" "}
-          <Button
-            onClick={() => {
-              toggleView("Checkout");
-            }}
-          >
-            Checkout
-          </Button>
-        </>
-      ) : null}
-    </>
+    <Paper>
+      <Grid
+        container
+        direction="row"
+        justify="space-evenly"
+        alignItems="flex-start"
+        spacing={2}
+      >
+        <Grid item xs={8}>
+          <div className={classes.root}>
+            <List>
+              {cart && cart.length
+                ? cart.map(product => (
+                    <ListItem key={product.cartItemID}>
+                      <CartItem
+                        data={product}
+                        onRemoveFromCart={removeFromCart}
+                        onUpdateCart={(item, id) => updateCart(item, id)}
+                      />
+                    </ListItem>
+                  ))
+                : "Cart Empty"}
+            </List>
+          </div>
+        </Grid>
+        <Grid item xs={4}>
+          <Paper className={classes.paper}>
+            <h1>Shopping Cart</h1>
+            <h2>Estimated Total:${total}</h2>
+            <h4>(Before Tax and Shipping)</h4>
+            <Button
+              className={classes.confirm}
+              onClick={() => {
+                toggleView("Checkout");
+              }}
+            >
+              Checkout
+            </Button>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 };
 

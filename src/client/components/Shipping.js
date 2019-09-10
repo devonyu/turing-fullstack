@@ -18,10 +18,14 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     display: "flex",
     minWidth: 120
+  },
+  confirm: {
+    backgroundColor: "#f2ca66"
   }
 }));
 
 const Shipping = props => {
+  const { confirmShipping } = props;
   const [shippingData, setShippingData] = React.useState({
     firstName: "",
     lastName: "",
@@ -131,9 +135,10 @@ const Shipping = props => {
         <FormHelperText>Required*</FormHelperText>
       </FormControl>
       <Button
+        className={classes.confirm}
         onClick={() => {
           console.log("confirm shipping");
-          console.log(shippingData);
+          confirmShipping(shippingData);
         }}
       >
         Confirm Shipping
