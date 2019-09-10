@@ -86,8 +86,10 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
+const mapStateToProps = ({ cart }) => ({ cart });
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(App);
 

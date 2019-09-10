@@ -4,7 +4,7 @@ const nanoid = require("nanoid");
 
 const initialCart = { cart: [], total: 0, cartID: null };
 
-const cartReducer = (state = initialCart, action) => {
+const cart = (state = initialCart, action) => {
   let { total } = state;
 
   if (action.type === "LOADSESSION") {
@@ -108,4 +108,4 @@ const cartReducer = (state = initialCart, action) => {
   return state;
 };
 
-export default cartReducer;
+export default cart;

@@ -224,8 +224,8 @@ const Main = props => {
 
 const mapStateToProps = state => {
   return {
-    cart: state.cart,
-    total: state.total
+    cart: state.cart.cart,
+    total: state.cart.total
   };
 };
 
