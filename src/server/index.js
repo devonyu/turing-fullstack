@@ -11,7 +11,8 @@ const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: process.env.MYSQL_PASS,
-  database: "tshirtshop"
+  database: "tshirtshop",
+  multipleStatements: true
 });
 
 connection.connect();
@@ -50,6 +51,33 @@ app.get("/api/categories", (req, res) => {
 // Get Departments
 app.get("/api/departments", (req, res) => {
   connection.query("SELECT * from department;", (err, rows) => {
+    if (err) throw err;
+    res.json(rows);
+  });
+});
+
+// Get Shipping information - region information and shipping
+app.get("/api/shipping", (req, res) => {
+  const query = "SELECT * from shipping;SELECT * from shipping_region;";
+  connection.query(query, [2, 1], (error, results) => {
+    if (error) {
+      throw error;
+    }
+    res.json(results);
+  });
+});
+
+// Get Tax information
+app.get("/api/tax", (req, res) => {
+  connection.query("SELECT * from tax;", (err, rows) => {
+    if (err) throw err;
+    res.json(rows);
+  });
+});
+
+// Get Product Category information
+app.get("/api/productCategory", (req, res) => {
+  connection.query("SELECT * from product_category;", (err, rows) => {
     if (err) throw err;
     res.json(rows);
   });
