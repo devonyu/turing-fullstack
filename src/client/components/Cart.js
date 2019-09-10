@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import CartItem from "./CartItem";
 
 const Cart = props => {
-  const { cart, total, removeFromCart, updateCart } = props;
+  const { cart, removeFromCart, toggleView, total, updateCart } = props;
   return (
     <>
       <h1>Cart Items</h1>
@@ -30,7 +30,7 @@ const Cart = props => {
           <h1>Total ${total} (Before Tax and Shipping)</h1>{" "}
           <Button
             onClick={() => {
-              // console.log("Checkout Clicked");
+              toggleView("Checkout");
             }}
           >
             Checkout
@@ -43,9 +43,7 @@ const Cart = props => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addToCart: (item, id) => dispatch({ type: "ADD", val: item, id }),
     removeFromCart: item => dispatch({ type: "REMOVE", val: item }),
-    getCartFromSession: id => dispatch({ type: "LOADSESSION", id }),
     updateCart: (item, id) =>
       dispatch({ type: "UPDATE", val: item, cartItemID: id })
   };
@@ -86,5 +84,6 @@ Cart.propTypes = {
   ).isRequired,
   removeFromCart: PropTypes.func.isRequired,
   updateCart: PropTypes.func.isRequired,
+  toggleView: PropTypes.func.isRequired,
   total: PropTypes.number.isRequired
 };
