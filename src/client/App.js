@@ -1,17 +1,19 @@
-import React, { Component } from "react";
 import "./app.css";
-import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 import axios from "axios";
-import Main from "./components/Main";
+import { connect } from "react-redux";
 import { createSession, getSessionID } from "./utils/localstorage";
+
+import Main from "./components/Main";
 
 const sessionID = getSessionID();
 
 class App extends Component {
   state = {
-    username: null,
-    categories: null,
-    departments: null
+    username: "",
+    categories: [],
+    departments: []
   };
 
   componentDidMount() {
@@ -40,16 +42,19 @@ class App extends Component {
   };
 
   loadCartFromSession = () => {
-    this.props.getCartFromSession(sessionID);
+    const { getCartFromSession } = this.props;
+    getCartFromSession(sessionID);
   };
 
   onAddToCart = (item, attributes) => {
     const finalItem = { ...item, attributes };
-    this.props.addToCart(finalItem, sessionID);
+    const { addToCart } = this.props;
+    addToCart(finalItem, sessionID);
   };
 
   onRemoveFromCart = item => {
-    this.props.removeFromCart(item);
+    const { removeFromCart } = this.props;
+    removeFromCart(item);
   };
 
   render() {
@@ -85,3 +90,9 @@ export default connect(
   null,
   mapDispatchToProps
 )(App);
+
+App.propTypes = {
+  addToCart: PropTypes.func.isRequired,
+  getCartFromSession: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired
+};

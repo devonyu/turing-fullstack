@@ -6,12 +6,13 @@ import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { connect } from "react-redux";
 import ProductList from "./ProductList";
 import CartSideItem from "./CartSideItem";
 import Cart from "./Cart";
@@ -49,7 +50,6 @@ const Main = props => {
   const classes = useStyles();
   const {
     cart,
-    cartID,
     categories,
     departments,
     onAddToCart,
@@ -57,11 +57,10 @@ const Main = props => {
     total,
     username
   } = props;
-  // console.log("INSIDE MAIN");
-  // console.log(cart);
-  // console.log(total);
   const [view, toggleView] = useState("Products");
   const [selectedDepartment, toggleDepartment] = useState(null);
+  // TODO: Work on logic to filter items by category
+  // TODO: Be able to deselect categories and departments for fitlering
   const [selectedCategory, toggleCategory] = useState(null);
   const [selectedDepartmentIndex, setSelectedIndexDepartment] = useState(null);
   const [selectedCategoryIndex, setSelectedIndexCategory] = useState(null);
@@ -110,6 +109,7 @@ const Main = props => {
         anchor="left"
       >
         <img
+          // eslint-disable-next-line max-len
           src="https://github.com/zandoan/turing-fullstack/blob/master/Images/images/tshirtshop.png?raw=true"
           alt="logo"
         />
@@ -167,12 +167,12 @@ const Main = props => {
             }}
           />
           {cart && cart.length
-            ? cart.map((product, index) => (
+            ? cart.map(product => (
                 <ListItem
                   button
                   key={product.cartItemID}
                   onClick={() => {
-                    console.log(`${product.name} cliked`);
+                    // console.log(`${product.name} cliked`);
                   }}
                 >
                   <CartSideItem
@@ -207,7 +207,6 @@ const Main = props => {
 const mapStateToProps = state => {
   return {
     cart: state.cart,
-    cartID: state.cartID,
     total: state.total
   };
 };
@@ -216,3 +215,51 @@ export default connect(
   mapStateToProps,
   null
 )(Main);
+
+Main.defaultProps = {
+  categories: [],
+  departments: [],
+  total: 0,
+  username: "admin"
+};
+
+Main.propTypes = {
+  cart: PropTypes.arrayOf(
+    PropTypes.shape({
+      attributes: PropTypes.shape({
+        quantity: PropTypes.number,
+        size: PropTypes.string,
+        color: PropTypes.string
+      }),
+      cartItemID: PropTypes.string,
+      description: PropTypes.string,
+      discounted_price: PropTypes.number,
+      display: PropTypes.number,
+      image: PropTypes.string,
+      image_2: PropTypes.string,
+      name: PropTypes.string,
+      price: PropTypes.number,
+      product_id: PropTypes.number,
+      thumbnail: PropTypes.string
+    })
+  ).isRequired,
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      category_id: PropTypes.number,
+      department_id: PropTypes.number,
+      description: PropTypes.string,
+      name: PropTypes.string
+    })
+  ),
+  departments: PropTypes.arrayOf(
+    PropTypes.shape({
+      department_id: PropTypes.number,
+      description: PropTypes.string,
+      name: PropTypes.string
+    })
+  ),
+  onAddToCart: PropTypes.func.isRequired,
+  onRemoveFromCart: PropTypes.func.isRequired,
+  total: PropTypes.number,
+  username: PropTypes.string
+};

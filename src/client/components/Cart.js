@@ -1,21 +1,20 @@
-import React from "react";
 import Button from "@material-ui/core/Button";
-import { connect } from "react-redux";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+
 import CartItem from "./CartItem";
 
 const Cart = props => {
-  // console.log("INSIDE CART");
-  const { cart, cartID, total, removeFromCart, updateCart } = props;
-  // console.log(cart);
-  // console.log(updateCart);
+  const { cart, total, removeFromCart, updateCart } = props;
   return (
     <>
       <h1>Cart Items</h1>
       <List>
         {cart && cart.length
-          ? cart.map((product, index) => (
+          ? cart.map(product => (
               <ListItem key={product.cartItemID}>
                 <CartItem
                   data={product}
@@ -31,7 +30,7 @@ const Cart = props => {
           <h1>Total ${total} (Before Tax and Shipping)</h1>{" "}
           <Button
             onClick={() => {
-              console.log("Checkout Clicked");
+              // console.log("Checkout Clicked");
             }}
           >
             Checkout
@@ -64,3 +63,28 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Cart);
+
+Cart.propTypes = {
+  cart: PropTypes.arrayOf(
+    PropTypes.shape({
+      attributes: PropTypes.shape({
+        quantity: PropTypes.number,
+        size: PropTypes.string,
+        color: PropTypes.string
+      }),
+      cartItemID: PropTypes.string,
+      description: PropTypes.string,
+      discounted_price: PropTypes.number,
+      display: PropTypes.number,
+      image: PropTypes.string,
+      image_2: PropTypes.string,
+      name: PropTypes.string,
+      price: PropTypes.number,
+      product_id: PropTypes.number,
+      thumbnail: PropTypes.string
+    })
+  ).isRequired,
+  removeFromCart: PropTypes.func.isRequired,
+  updateCart: PropTypes.func.isRequired,
+  total: PropTypes.number.isRequired
+};
