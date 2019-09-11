@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 // import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
@@ -9,18 +10,30 @@ import Divider from "@material-ui/core/Divider";
 // shipping and handling, tax, total will be calculated based on api
 // calls with data from user (address - tax+ shipping)
 
+const useStyles = makeStyles(theme => ({
+  container: {
+    margin: theme.spacing(1)
+  },
+  confirm: {
+    backgroundColor: "#f2ca66"
+  }
+}));
+
 const OrderSummary = props => {
-  const { cart, total } = props;
+  const { cart, checkout, total } = props;
+  const classes = useStyles();
   console.log("ORDER SUMMARY");
-  console.log(cart);
+  console.log(props);
   return (
-    <>
+    <div className={classes.container}>
       <Button
+        className={classes.confirm}
         onClick={() => {
           console.log("Order Summary Custom button pressed");
+          console.log(props);
         }}
       >
-        Order Summary btn
+        Order Summary
       </Button>
       <Divider />
       <h1>Order Summary</h1>
@@ -31,7 +44,7 @@ const OrderSummary = props => {
       <Divider />
       <h3>Order total: --</h3>
       <Grid container />
-    </>
+    </div>
   );
 };
 

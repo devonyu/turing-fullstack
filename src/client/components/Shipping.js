@@ -1,9 +1,12 @@
 import React from "react";
+import axios from "axios";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 
 const useStyles = makeStyles(theme => ({
@@ -13,11 +16,16 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    display: "flex"
+    display: "flex",
+    minWidth: 120
+  },
+  confirm: {
+    backgroundColor: "#f2ca66"
   }
 }));
 
 const Shipping = props => {
+  const { confirmShipping } = props;
   const [shippingData, setShippingData] = React.useState({
     firstName: "",
     lastName: "",
@@ -26,13 +34,31 @@ const Shipping = props => {
     city: "",
     state: "",
     zip: "",
-    country: ""
+    country: 1
   });
-  const [labelWidth, setLabelWidth] = React.useState([...Array(8).keys(null)]);
+  const [shippingApi, setShippingApi] = React.useState({
+    shippingRegions: [],
+    shippingCosts: []
+  });
+  const [labelWidth, setLabelWidth] = React.useState([...Array(7).keys(null)]);
   const itemsRef = React.useRef([]);
   const classes = useStyles();
 
   React.useEffect(() => {
+    async function getShippingApi() {
+      try {
+        const response = await axios.get("/api/shipping");
+        const { data } = response;
+        setShippingApi({
+          ...shippingApi,
+          shippingCosts: [...data[0]],
+          shippingRegions: [...data[1]]
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    getShippingApi();
     const final = [...labelWidth].map((label, idx) => {
       return itemsRef.current[idx].offsetWidth;
     });
@@ -52,8 +78,7 @@ const Shipping = props => {
         "address2",
         "city",
         "zip",
-        "state",
-        "country"
+        "state"
       ].map((shippingInput, i) => {
         return (
           <FormControl
@@ -85,10 +110,35 @@ const Shipping = props => {
           </FormControl>
         );
       })}
+      <FormControl variant="outlined" className={classes.formControl}>
+        <InputLabel ref={null} htmlFor="country">
+          Country
+        </InputLabel>
+        <Select
+          value={shippingData.country}
+          onChange={handleChange("country")}
+          inputProps={{
+            name: "country",
+            id: "country"
+          }}
+          error={shippingData.country === 1}
+        >
+          {shippingApi.shippingRegions.map(region => (
+            <MenuItem
+              value={region.shipping_region_id}
+              key={region.shipping_region}
+            >
+              {region.shipping_region}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>Required*</FormHelperText>
+      </FormControl>
       <Button
+        className={classes.confirm}
         onClick={() => {
           console.log("confirm shipping");
-          console.log(shippingData);
+          confirmShipping(shippingData);
         }}
       >
         Confirm Shipping

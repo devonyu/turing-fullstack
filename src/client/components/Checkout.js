@@ -52,8 +52,16 @@ const useStyles = makeStyles(theme => ({
 
 const Checkout = props => {
   const classes = useStyles();
-  const { cart, total, ship, checkout, payment } = props;
-  // console.log(checkout);
+  const {
+    cart,
+    total,
+    confirmShipping,
+    confirmPayment,
+    shipExample,
+    cartExample,
+    checkout,
+    paymentExample
+  } = props;
   console.log(cart);
 
   const cartItemAmount = () => {
@@ -91,11 +99,14 @@ const Checkout = props => {
                   id="panel1a-header"
                 >
                   <Typography className={classes.heading}>
-                    1. Shipping Information
+                    1 Shipping Address
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Shipping checkout={checkout} />
+                  <Shipping
+                    checkout={checkout}
+                    confirmShipping={confirmShipping}
+                  />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
               <ExpansionPanel>
@@ -105,11 +116,14 @@ const Checkout = props => {
                   id="panel1a-header"
                 >
                   <Typography className={classes.heading}>
-                    2. Payment Information
+                    2 Payment method
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Payments checkout={checkout} />
+                  <Payments
+                    checkout={checkout}
+                    confirmPayment={confirmPayment}
+                  />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
               <ExpansionPanel>
@@ -119,11 +133,15 @@ const Checkout = props => {
                   id="panel1a-header"
                 >
                   <Typography className={classes.heading}>
-                    3 Review Item Information
+                    3 Review items and shipping
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <CheckoutReview checkout={checkout} />
+                  <CheckoutReview
+                    checkout={checkout}
+                    cart={cart}
+                    total={total}
+                  />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </div>
@@ -131,7 +149,7 @@ const Checkout = props => {
         </Grid>
         <Grid item xs={4}>
           <Paper className={classes.paper}>
-            <OrderSummary cart={cart} total={total} />
+            <OrderSummary cart={cart} total={total} checkout={checkout} />
           </Paper>
         </Grid>
       </Grid>
@@ -144,17 +162,24 @@ const Checkout = props => {
       </Button>
       <Button
         onClick={() => {
-          ship();
+          shipExample();
         }}
       >
-        Redux Add shipping info magic!
+        Redux Add shipping
       </Button>
       <Button
         onClick={() => {
-          payment();
+          paymentExample();
         }}
       >
-        Redux Add payment info magic!
+        Redux Add payment
+      </Button>
+      <Button
+        onClick={() => {
+          cartExample();
+        }}
+      >
+        Redux Add cart
       </Button>
     </Paper>
   );
@@ -166,8 +191,13 @@ const mapDispatchToProps = dispatch => {
     removeFromCart: item => dispatch({ type: "REMOVE", val: item }),
     getCartFromSession: id => dispatch({ type: "LOADSESSION", id }),
     updateCart: (item, id) => dispatch({ type: "UPDATE", val: item, id }),
-    ship: () => dispatch({ type: "SHIPPING" }),
-    payment: () => dispatch({ type: "PAYMENT" })
+    shipExample: () => dispatch({ type: "SHIPPINGEXAMPLE" }),
+    paymentExample: () => dispatch({ type: "PAYMENTEXAMPLE" }),
+    cartExample: () => dispatch({ type: "CARTEXAMPLE" }),
+    confirmShipping: shippingInput =>
+      dispatch({ type: "CONFIRMSHIPPING", shippingInput }),
+    confirmPayment: paymentInput =>
+      dispatch({ type: "CONFIRMPAYMENT", paymentInput })
   };
 };
 

@@ -8,14 +8,9 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 
-import CartItem from "./CartItem";
+import AltCartItem from "./AltCartItem";
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    display: "grid",
-    gridTemplateColumns: "repeat(12, 1fr)",
-    gridGap: theme.spacing(3)
-  },
   confirm: {
     backgroundColor: "#f2ca66"
   },
@@ -35,52 +30,49 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Cart = props => {
-  const { cart, removeFromCart, toggleView, total, updateCart } = props;
+const AltCart = props => {
+  const { cart, removeFromCart, total, updateCart } = props;
   const classes = useStyles();
   return (
-    <Paper>
-      <Grid
-        container
-        direction="row"
-        justify="space-evenly"
-        alignItems="flex-start"
-        spacing={2}
-      >
-        <Grid item xs={8}>
-          <div className={classes.root}>
-            <List>
-              {cart && cart.length
-                ? cart.map(product => (
-                    <ListItem key={product.cartItemID}>
-                      <CartItem
-                        data={product}
-                        onRemoveFromCart={removeFromCart}
-                        onUpdateCart={(item, id) => updateCart(item, id)}
-                      />
-                    </ListItem>
-                  ))
-                : "Cart Empty"}
-            </List>
-          </div>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper className={classes.paper}>
-            <h1>Shopping Cart</h1>
-            <h2>Subtotal: ${total}</h2>
-            <h4>(Before Tax and Shipping)</h4>
-            <Button
-              className={classes.confirm}
-              onClick={() => {
-                toggleView("Checkout");
-              }}
-            >
-              Checkout
-            </Button>
-          </Paper>
-        </Grid>
+    <Grid
+      container
+      direction="row"
+      justify="space-between"
+      alignItems="flex-start"
+      spacing={2}
+    >
+      <Grid item xs={8}>
+        <div className={classes.root}>
+          <List>
+            {cart && cart.length
+              ? cart.map(product => (
+                  <ListItem key={product.cartItemID}>
+                    <AltCartItem
+                      data={product}
+                      onRemoveFromCart={item => removeFromCart(item)}
+                      onUpdateCart={(item, id) => updateCart(item, id)}
+                    />
+                  </ListItem>
+                ))
+              : "Cart Empty"}
+          </List>
+        </div>
       </Grid>
-    </Paper>
+      <Grid item xs={4}>
+        <Paper className={classes.paper}>
+          <h1>Select Shipping</h1>
+          <h2>Subtotal: ${total}</h2>
+          <Button
+            className={classes.confirm}
+            onClick={() => {
+              console.log("Confirm shipping");
+            }}
+          >
+            Confirm Shipping Selection
+          </Button>
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 
@@ -103,9 +95,9 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Cart);
+)(AltCart);
 
-Cart.propTypes = {
+AltCart.propTypes = {
   cart: PropTypes.arrayOf(
     PropTypes.shape({
       attributes: PropTypes.shape({
@@ -127,6 +119,5 @@ Cart.propTypes = {
   ).isRequired,
   removeFromCart: PropTypes.func.isRequired,
   updateCart: PropTypes.func.isRequired,
-  toggleView: PropTypes.func.isRequired,
   total: PropTypes.number.isRequired
 };

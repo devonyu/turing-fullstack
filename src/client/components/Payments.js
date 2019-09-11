@@ -14,10 +14,14 @@ const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
     display: "flex"
+  },
+  confirm: {
+    backgroundColor: "#f2ca66"
   }
 }));
 
 const Payments = props => {
+  const { confirmPayment } = props;
   const [paymentData, setPaymentData] = React.useState({
     code: "",
     creditCard: "",
@@ -67,9 +71,10 @@ const Payments = props => {
         );
       })}
       <Button
+        className={classes.confirm}
         onClick={() => {
           console.log("confirm payment");
-          console.log(paymentData);
+          confirmPayment(paymentData);
         }}
       >
         Confirm Payment
