@@ -62,7 +62,6 @@ const Checkout = props => {
     checkout,
     paymentExample
   } = props;
-  // console.log(checkout);
   console.log(cart);
 
   const cartItemAmount = () => {
@@ -100,7 +99,7 @@ const Checkout = props => {
                   id="panel1a-header"
                 >
                   <Typography className={classes.heading}>
-                    1. Shipping Information
+                    1 Shipping Address
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
@@ -117,7 +116,7 @@ const Checkout = props => {
                   id="panel1a-header"
                 >
                   <Typography className={classes.heading}>
-                    2. Payment Information
+                    2 Payment method
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
@@ -134,11 +133,15 @@ const Checkout = props => {
                   id="panel1a-header"
                 >
                   <Typography className={classes.heading}>
-                    3 Review Item Information
+                    3 Review items and shipping
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <CheckoutReview checkout={checkout} />
+                  <CheckoutReview
+                    checkout={checkout}
+                    cart={cart}
+                    total={total}
+                  />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </div>
