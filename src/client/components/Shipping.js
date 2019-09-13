@@ -86,7 +86,15 @@ const Shipping = props => {
   }, [shippingData]);
 
   const handleChange = name => event => {
-    setShippingData({ ...shippingData, [name]: event.target.value });
+    if (name === "country") {
+      setShippingData({
+        ...shippingData,
+        [name]: event.target.value,
+        shippingID: 0 // resets shipping value when country changes
+      });
+    } else {
+      setShippingData({ ...shippingData, [name]: event.target.value });
+    }
   };
 
   return (
@@ -166,7 +174,7 @@ const Shipping = props => {
               name: "shippingID",
               id: "shippingID"
             }}
-            error={shippingData.country === 1}
+            error={shippingData.shippingID === 0}
           >
             {shippingApi.shippingCosts
               .filter(
