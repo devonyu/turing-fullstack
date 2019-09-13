@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const OrderSummary = props => {
   const { cart, checkout, total } = props;
+  const tax = 8.5;
   const { shippingID } = checkout.shippingData;
   const [shippingCosts, setShippingCost] = React.useState([]);
   const classes = useStyles();
@@ -30,7 +31,7 @@ const OrderSummary = props => {
     async function getShippingApi() {
       try {
         const response = await axios.get("/api/shipping");
-        const { data } = response;
+        const { data } = await response;
         setShippingCost(...data);
       } catch (error) {
         console.error(error);
@@ -39,9 +40,11 @@ const OrderSummary = props => {
     getShippingApi();
   }, []);
 
-  console.log("ORDER SUMMARY");
-  console.log(props);
-  console.log(shippingCosts);
+  const shippingPrice =
+    shippingCosts.filter(
+      shippingCost => shippingCost.shipping_id === shippingID
+    )[0] || {};
+
   return (
     <div className={classes.container}>
       <Button
@@ -57,24 +60,34 @@ const OrderSummary = props => {
       <h1>Order Summary</h1>
       <h3>Items: ${total}</h3>
       <h3>
-        Shipping and handling:
-        {
-          shippingCosts.filter(
-            shippingCost => shippingCost.shipping_id === shippingID
-          ).shipping_cost
-        }
+        Shipping and handling:{" "}
+        {shippingPrice.shipping_cost ? `$${shippingPrice.shipping_cost}` : "-"}
       </h3>
       <h3>
-        Total before tax:
-        {
-          shippingCosts.filter(
-            shippingCost => shippingCost.shipping_id === shippingID
-          ).shipping_cost
-        }
+        Total before tax:{" "}
+        {shippingPrice.shipping_cost
+          ? `$${total + shippingPrice.shipping_cost}`
+          : "-"}
       </h3>
-      <h3>Estimated tax to be collected: --</h3>
+      <h3>
+        Estimated tax to be collected:
+        {shippingPrice.shipping_cost
+          ? `$${((total + shippingPrice.shipping_cost) * (tax / 100)).toFixed(
+              2
+            )}`
+          : "-"}
+      </h3>
       <Divider />
-      <h3>Order total: --</h3>
+      <h3>
+        Order total: $
+        {shippingPrice.shipping_cost
+          ? `$${(
+              total +
+              shippingPrice.shipping_cost +
+              (total + shippingPrice.shipping_cost) * (tax / 100)
+            ).toFixed(2)}`
+          : "-"}
+      </h3>
       <Grid container />
     </div>
   );
