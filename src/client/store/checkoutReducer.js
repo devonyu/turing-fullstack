@@ -19,6 +19,15 @@ const checkout = (state = initialCheckoutData, action) => {
     };
   }
 
+  if (action.type === "UPDATESHIPPING") {
+    console.log("Updating Shipping Selection");
+    console.log(action.shippingUpdate);
+    return {
+      ...state,
+      shippingData: action.shippingUpdate
+    };
+  }
+
   if (action.type === "SHIPPINGEXAMPLE") {
     console.log("Shipping Complete");
     return {

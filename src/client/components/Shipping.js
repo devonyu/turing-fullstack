@@ -44,7 +44,7 @@ const isDirty = state => {
 };
 
 const Shipping = props => {
-  const { confirmShipping, panelViewLogic } = props;
+  const { confirmShipping, panelViewLogic, checkout } = props;
   const [shippingData, setShippingData] = React.useState({
     firstName: "",
     lastName: "",
@@ -77,6 +77,10 @@ const Shipping = props => {
       } catch (error) {
         console.error(error);
       }
+    }
+    // if shipping data exsist, load it.  Redux instead?
+    if (checkout.shippingData && checkout.shippingData.shippingID) {
+      setShippingData(checkout.shippingData);
     }
     getShippingApi();
     const final = [...labelWidth].map((label, idx) => {

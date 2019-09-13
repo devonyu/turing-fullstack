@@ -20,6 +20,11 @@ const useStyles = makeStyles(theme => ({
   confirm: {
     backgroundColor: "#f2ca66"
   },
+  formControl: {
+    margin: theme.spacing(1),
+    display: "flex",
+    minWidth: 120
+  },
   paper: {
     padding: theme.spacing(1),
     textAlign: "center",
@@ -37,7 +42,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const AltCart = props => {
-  const { cart, removeFromCart, total, updateCart } = props;
+  const { cart, checkout, removeFromCart, total, updateCart } = props;
+  const { shippingData } = checkout;
+  console.log(shippingData);
   const classes = useStyles();
   return (
     <Grid
@@ -67,30 +74,36 @@ const AltCart = props => {
       <Grid item xs={4}>
         <Paper className={classes.paper}>
           <h1>Select Shipping</h1>
-          {/* <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel ref={null} htmlFor="shippingOption">
-              Shipping options
-            </InputLabel>
-            <Select
-              value={shippingData.country}
-              onChange={handleChange("country")}
-              inputProps={{
-                name: "country",
-                id: "country"
-              }}
-              error={shippingData.country === 1}
-            >
-              {shippingApi.shippingRegions.map(region => (
-                <MenuItem
-                  value={region.shipping_region_id}
-                  key={region.shipping_region}
-                >
-                  {region.shipping_region}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>Required*</FormHelperText>
-          </FormControl> */}
+          <>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel ref={null} htmlFor="shippingID">
+                Shipping options
+              </InputLabel>
+              <Select
+                // value={shippingData.shippingID}
+                // onChange={handleChange("shippingID")}
+                inputProps={{
+                  name: "shippingID",
+                  id: "shippingID"
+                }}
+                // error={shippingData.shippingID === 0}
+              >
+                {/* {shippingApi.shippingCosts
+                  .filter(
+                    option => option.shipping_region_id === shippingData.country
+                  )
+                  .map(filteredShippingOption => (
+                    <MenuItem
+                      value={filteredShippingOption.shipping_id}
+                      key={filteredShippingOption.shipping_id}
+                    >
+                      {filteredShippingOption.shipping_type}
+                    </MenuItem>
+                  ))} */}
+              </Select>
+              <FormHelperText>Required*</FormHelperText>
+            </FormControl>
+          </>
           <h2>Subtotal: ${total}</h2>
           <Button
             className={classes.confirm}
@@ -110,7 +123,9 @@ const mapDispatchToProps = dispatch => {
   return {
     removeFromCart: item => dispatch({ type: "REMOVE", val: item }),
     updateCart: (item, id) =>
-      dispatch({ type: "UPDATE", val: item, cartItemID: id })
+      dispatch({ type: "UPDATE", val: item, cartItemID: id }),
+    updateShippingOption: shippingInput =>
+      dispatch({ type: "UPDATESHIPPING", shippingInput })
   };
 };
 

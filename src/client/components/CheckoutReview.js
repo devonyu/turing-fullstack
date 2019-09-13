@@ -23,9 +23,8 @@ const useStyles = makeStyles(theme => ({
 const CheckoutReview = props => {
   const { cart, checkout, total } = props;
   const classes = useStyles();
+  // console.log(checkout);
   // display shipping speeds + costs
-  // display items with quantity changer + delete
-  // once chosen -> show order totals
   return (
     <Grid
       container
@@ -33,7 +32,7 @@ const CheckoutReview = props => {
       justify="space-between"
       alignItems="baseline"
     >
-      <AltCart />
+      <AltCart checkout={checkout} />
       <div className={classes.detail}>
         <Button
           className={classes.placeOrder}
