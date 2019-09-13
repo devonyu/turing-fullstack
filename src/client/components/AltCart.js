@@ -2,6 +2,12 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import PropTypes from "prop-types";
@@ -61,6 +67,30 @@ const AltCart = props => {
       <Grid item xs={4}>
         <Paper className={classes.paper}>
           <h1>Select Shipping</h1>
+          {/* <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel ref={null} htmlFor="shippingOption">
+              Shipping options
+            </InputLabel>
+            <Select
+              value={shippingData.country}
+              onChange={handleChange("country")}
+              inputProps={{
+                name: "country",
+                id: "country"
+              }}
+              error={shippingData.country === 1}
+            >
+              {shippingApi.shippingRegions.map(region => (
+                <MenuItem
+                  value={region.shipping_region_id}
+                  key={region.shipping_region}
+                >
+                  {region.shipping_region}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Required*</FormHelperText>
+          </FormControl> */}
           <h2>Subtotal: ${total}</h2>
           <Button
             className={classes.confirm}

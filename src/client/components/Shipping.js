@@ -34,7 +34,8 @@ const Shipping = props => {
     city: "",
     state: "",
     zip: "",
-    country: 1
+    country: 1,
+    shippingID: 0
   });
   const [shippingApi, setShippingApi] = React.useState({
     shippingRegions: [],
@@ -134,6 +135,36 @@ const Shipping = props => {
         </Select>
         <FormHelperText>Required*</FormHelperText>
       </FormControl>
+      {shippingData && shippingData.country >= 2 ? (
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel ref={null} htmlFor="shippingID">
+            Shipping options
+          </InputLabel>
+          <Select
+            value={shippingData.shippingID}
+            onChange={handleChange("shippingID")}
+            inputProps={{
+              name: "shippingID",
+              id: "shippingID"
+            }}
+            error={shippingData.country === 1}
+          >
+            {shippingApi.shippingCosts
+              .filter(
+                option => option.shipping_region_id === shippingData.country
+              )
+              .map(filteredShippingOption => (
+                <MenuItem
+                  value={filteredShippingOption.shipping_id}
+                  key={filteredShippingOption.shipping_id}
+                >
+                  {filteredShippingOption.shipping_type}
+                </MenuItem>
+              ))}
+          </Select>
+          <FormHelperText>Required*</FormHelperText>
+        </FormControl>
+      ) : null}
       <Button
         className={classes.confirm}
         onClick={() => {
