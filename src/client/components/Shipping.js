@@ -44,7 +44,7 @@ const isDirty = state => {
 };
 
 const Shipping = props => {
-  const { confirmShipping } = props;
+  const { confirmShipping, panelViewLogic } = props;
   const [shippingData, setShippingData] = React.useState({
     firstName: "",
     lastName: "",
@@ -198,6 +198,7 @@ const Shipping = props => {
         onClick={() => {
           console.log("confirm shipping clicked");
           confirmShipping(shippingData);
+          panelViewLogic("shipping");
         }}
       >
         Confirm Shipping

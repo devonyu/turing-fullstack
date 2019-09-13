@@ -42,13 +42,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // Use Amazon checkout as prototype
-// shipping information
-// display shipping estimate after entered
-// payment information
-// show final cart preview
 // validation and verification/warnings
 // connect to strip api
-// on success, on fail - backend checks
+// on success, on fail - backend checks and error codes
 
 const Checkout = props => {
   const classes = useStyles();
@@ -62,7 +58,40 @@ const Checkout = props => {
     checkout,
     paymentExample
   } = props;
-  console.log(cart);
+  const [panelViews, setPanelViews] = React.useState({
+    shipping: true,
+    payment: false,
+    review: false
+  });
+  console.log(`%c Shipping INFO`, "color: red");
+  console.log(`%c ${JSON.stringify(checkout.shippingData)}`, "color: red");
+  console.log(`%c Payment INFO`, "color: green");
+  console.log(`%c ${JSON.stringify(checkout.paymentData)}`, "color: green");
+
+  const panelViewLogic = input => {
+    if (input === "shipping") {
+      setPanelViews({
+        ...panelViews,
+        shipping: false,
+        payment: true,
+        review: false
+      });
+    } else if (input === "payment") {
+      setPanelViews({
+        ...panelViews,
+        shipping: false,
+        payment: false,
+        review: true
+      });
+    }
+  };
+
+  const togglePannel = input => {
+    setPanelViews({
+      ...panelViews,
+      [input]: !panelViews[input]
+    });
+  };
 
   const cartItemAmount = () => {
     return (
@@ -79,6 +108,7 @@ const Checkout = props => {
       </h1>
     );
   };
+
   return (
     <Paper>
       {cartItemAmount()}
@@ -92,11 +122,14 @@ const Checkout = props => {
         <Grid item xs={8}>
           <Paper className={classes.paper}>
             <div className={classes.root}>
-              <ExpansionPanel>
+              <ExpansionPanel expanded={panelViews.shipping}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  onClick={() => {
+                    togglePannel("shipping");
+                  }}
                 >
                   <Typography className={classes.heading}>
                     1 Shipping Address
@@ -106,14 +139,18 @@ const Checkout = props => {
                   <Shipping
                     checkout={checkout}
                     confirmShipping={confirmShipping}
+                    panelViewLogic={panelViewLogic}
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel>
+              <ExpansionPanel expanded={panelViews.payment}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  onClick={() => {
+                    togglePannel("payment");
+                  }}
                 >
                   <Typography className={classes.heading}>
                     2 Payment method
@@ -123,14 +160,18 @@ const Checkout = props => {
                   <Payments
                     checkout={checkout}
                     confirmPayment={confirmPayment}
+                    panelViewLogic={panelViewLogic}
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel>
+              <ExpansionPanel expanded={panelViews.review}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  onClick={() => {
+                    togglePannel("review");
+                  }}
                 >
                   <Typography className={classes.heading}>
                     3 Review items and shipping

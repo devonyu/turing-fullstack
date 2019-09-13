@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Payments = props => {
-  const { confirmPayment } = props;
+  const { confirmPayment, panelViewLogic } = props;
   const [paymentData, setPaymentData] = React.useState({
     code: "",
     creditCard: "",
@@ -75,6 +75,7 @@ const Payments = props => {
         onClick={() => {
           console.log("confirm payment");
           confirmPayment(paymentData);
+          panelViewLogic("payment");
         }}
       >
         Confirm Payment
