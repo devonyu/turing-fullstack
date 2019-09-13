@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const OrderSummary = props => {
   const { cart, checkout, total } = props;
-  const tax = 8.5;
+  const tax = 8.5; // fixed for now
   const { shippingID } = checkout.shippingData;
   const [shippingCosts, setShippingCost] = React.useState([]);
   const classes = useStyles();
@@ -50,11 +50,10 @@ const OrderSummary = props => {
       <Button
         className={classes.confirm}
         onClick={() => {
-          console.log("Order Summary Custom button pressed");
           console.log(props);
         }}
       >
-        Order Summary
+        Place Order
       </Button>
       <Divider />
       <h1>Order Summary</h1>
@@ -70,7 +69,7 @@ const OrderSummary = props => {
           : "-"}
       </h3>
       <h3>
-        Estimated tax to be collected:
+        Estimated tax to be collected (8.5%):
         {shippingPrice.shipping_cost
           ? `$${((total + shippingPrice.shipping_cost) * (tax / 100)).toFixed(
               2

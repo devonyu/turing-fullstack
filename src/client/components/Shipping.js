@@ -24,6 +24,25 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const isDirty = state => {
+  return Object.keys(state).every(shippingProp => {
+    if (
+      shippingProp !== "address2" &&
+      shippingProp !== "country" &&
+      shippingProp !== "shippingID"
+    ) {
+      return state[shippingProp].length > 0;
+    }
+    if (shippingProp === "country") {
+      return state[shippingProp] !== 1;
+    }
+    if (shippingProp === "shippingID") {
+      return state[shippingProp] !== 0;
+    }
+    return true;
+  });
+};
+
 const Shipping = props => {
   const { confirmShipping } = props;
   const [shippingData, setShippingData] = React.useState({
@@ -167,8 +186,9 @@ const Shipping = props => {
       ) : null}
       <Button
         className={classes.confirm}
+        disabled={!isDirty(shippingData)}
         onClick={() => {
-          console.log("confirm shipping");
+          console.log("confirm shipping clicked");
           confirmShipping(shippingData);
         }}
       >
