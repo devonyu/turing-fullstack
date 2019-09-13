@@ -20,6 +20,28 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const isDirty = state => {
+  return Object.keys(state).every(paymentProp => {
+    if (paymentProp === "code") {
+      // simple 3-4 digit validation
+      return state[paymentProp].length === 3 || state[paymentProp].length === 4;
+    }
+    if (paymentProp === "creditCard") {
+      // simple 16 digit validation
+      return state[paymentProp].length === 16;
+    }
+    if (paymentProp === "expiration") {
+      // simple 4 digit validation
+      return state[paymentProp].length === 4;
+    }
+    if (paymentProp === "name") {
+      // simple 3 name validation
+      return state[paymentProp].length >= 3;
+    }
+    return true;
+  });
+};
+
 const Payments = props => {
   const { confirmPayment, panelViewLogic } = props;
   const [paymentData, setPaymentData] = React.useState({
@@ -72,6 +94,7 @@ const Payments = props => {
       })}
       <Button
         className={classes.confirm}
+        disabled={!isDirty(paymentData)}
         onClick={() => {
           console.log("confirm payment");
           confirmPayment(paymentData);
