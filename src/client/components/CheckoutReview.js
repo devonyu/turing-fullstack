@@ -21,9 +21,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const CheckoutReview = props => {
-  const { cart, checkout, total } = props;
   const classes = useStyles();
-  // console.log(checkout);
+  const { cart, checkout, total } = props;
+  const tax = 8.5; // fixed for now
+  const { shippingID } = checkout.shippingData;
+
+  console.log(checkout);
   // display shipping speeds + costs
   return (
     <Grid
@@ -32,7 +35,7 @@ const CheckoutReview = props => {
       justify="space-between"
       alignItems="baseline"
     >
-      <AltCart checkout={checkout} />
+      <AltCart />
       <div className={classes.detail}>
         <Button
           className={classes.placeOrder}

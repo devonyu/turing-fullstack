@@ -45,7 +45,6 @@ const AltCart = props => {
     updateShippingOption
   } = props;
   const { shippingData, shippingAPI } = checkout || {};
-
   return (
     <Grid
       container
@@ -77,14 +76,15 @@ const AltCart = props => {
           <>
             <FormControl variant="outlined" className={classes.formControl}>
               <Select
-                value={shippingData.shippingID || ""}
+                value={(shippingData && shippingData.shippingID) || ""}
                 onChange={data => updateShippingOption(data.target)}
                 inputProps={{
                   name: "shippingID",
                   id: "shippingID"
                 }}
               >
-                {shippingAPI.shippingCosts &&
+                {shippingAPI &&
+                  shippingAPI.shippingCosts &&
                   shippingAPI.shippingCosts
                     .filter(
                       option =>
@@ -118,12 +118,13 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const mapStateToProps = (state, { checkout }) => {
+const mapStateToProps = state => {
+  const { cart, checkout } = state;
   return {
-    cart: state.cart.cart,
-    cartID: state.cart.cartID,
+    cart: cart.cart,
+    cartID: cart.cartID,
     checkout,
-    total: state.cart.total
+    total: cart.total
   };
 };
 

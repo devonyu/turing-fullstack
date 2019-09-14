@@ -47,13 +47,6 @@ const cart = (state = initialCart, action) => {
     } else {
       total -= action.val.price * action.val.attributes.quantity;
     }
-    // total = newCart.reduce((sum, cartItem) => {
-    //   const price =
-    //     cartItem.discounted_price !== 0
-    //       ? cartItem.discounted_price
-    //       : cartItem.price;
-    //   return sum + price * cartItem.attributes.quantity;
-    // });
 
     updateSession(action.id, {
       ...state,

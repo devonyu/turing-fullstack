@@ -51,13 +51,10 @@ const Checkout = props => {
   const classes = useStyles();
   const {
     cart,
-    cartExample,
     checkout,
     confirmPayment,
     confirmShipping,
     loadAPIData,
-    paymentExample,
-    shipExample,
     total
   } = props;
   const [panelViews, setPanelViews] = React.useState({
@@ -209,7 +206,7 @@ const Checkout = props => {
         </Grid>
         <Grid item xs={4}>
           <Paper className={classes.paper}>
-            <OrderSummary cart={cart} total={total} checkout={checkout} />
+            <OrderSummary cart={cart} total={total} />
           </Paper>
         </Grid>
       </Grid>
@@ -219,27 +216,6 @@ const Checkout = props => {
         }}
       >
         Back to Cart
-      </Button>
-      <Button
-        onClick={() => {
-          shipExample();
-        }}
-      >
-        Redux Add shipping
-      </Button>
-      <Button
-        onClick={() => {
-          paymentExample();
-        }}
-      >
-        Redux Add payment
-      </Button>
-      <Button
-        onClick={() => {
-          cartExample();
-        }}
-      >
-        Redux Add cart
       </Button>
     </Paper>
   );
@@ -251,9 +227,6 @@ const mapDispatchToProps = dispatch => {
     removeFromCart: item => dispatch({ type: "REMOVE", val: item }),
     getCartFromSession: id => dispatch({ type: "LOADSESSION", id }),
     updateCart: (item, id) => dispatch({ type: "UPDATE", val: item, id }),
-    shipExample: () => dispatch({ type: "SHIPPINGEXAMPLE" }),
-    paymentExample: () => dispatch({ type: "PAYMENTEXAMPLE" }),
-    cartExample: () => dispatch({ type: "CARTEXAMPLE" }),
     confirmShipping: shippingInput =>
       dispatch({ type: "CONFIRMSHIPPING", shippingInput }),
     confirmPayment: paymentInput =>
