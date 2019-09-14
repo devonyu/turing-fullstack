@@ -4,10 +4,9 @@ const initialCheckoutData = {
   paymentData: {},
   shippingAPI: {}
 };
-
+// possible to subscribe cart reducers here?
 const checkout = (state = initialCheckoutData, action) => {
   if (action.type === "CONFIRMSHIPPING") {
-    console.log("Shipping Confirmed");
     return {
       ...state,
       shippingData: action.shippingInput
@@ -15,7 +14,6 @@ const checkout = (state = initialCheckoutData, action) => {
   }
 
   if (action.type === "CONFIRMPAYMENT") {
-    console.log("Payment Confirmed");
     return {
       ...state,
       paymentData: action.paymentInput
@@ -23,7 +21,6 @@ const checkout = (state = initialCheckoutData, action) => {
   }
 
   if (action.type === "UPDATESHIPPING") {
-    console.log("Updating Shipping Selection");
     return {
       ...state,
       shippingData: {

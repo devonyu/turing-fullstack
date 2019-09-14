@@ -1,8 +1,10 @@
 import React from "react";
+import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 // import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import { orderTotal } from "../utils/commonFunctions";
 
 import AltCart from "./AltCart";
 
@@ -24,10 +26,16 @@ const CheckoutReview = props => {
   const classes = useStyles();
   const { cart, checkout, total } = props;
   const tax = 8.5; // fixed for now
-  const { shippingID } = checkout.shippingData;
+  const { shippingData, shippingAPI } = checkout || {};
+  const { shippingID } = shippingData || 0;
+  const { shippingCosts } = shippingAPI || [];
+  const shippingPrice =
+    (shippingCosts &&
+      shippingCosts.filter(
+        shippingCost => shippingCost.shipping_id === shippingID
+      )[0]) ||
+    {};
 
-  console.log(checkout);
-  // display shipping speeds + costs
   return (
     <Grid
       container
@@ -40,16 +48,25 @@ const CheckoutReview = props => {
         <Button
           className={classes.placeOrder}
           onClick={() => {
-            console.log("place order");
             console.log(checkout);
           }}
         >
           Place order
         </Button>
-        <h3 className={classes.total}> Order total: ${total}</h3>
+        <h3 className={classes.total}>
+          Order total:{" "}
+          {shippingPrice && shippingPrice.shipping_cost
+            ? `$${orderTotal(total, shippingPrice.shipping_cost, tax)}`
+            : `~$${total}`}
+        </h3>
       </div>
     </Grid>
   );
 };
 
-export default CheckoutReview;
+const mapStateToProps = ({ checkout }) => ({ checkout });
+
+export default connect(
+  mapStateToProps,
+  null
+)(CheckoutReview);

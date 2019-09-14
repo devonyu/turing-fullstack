@@ -32,13 +32,6 @@ const OrderSummary = props => {
   const { shippingData, shippingAPI } = checkout || {};
   const { shippingID } = shippingData || 0;
   const { shippingCosts } = shippingAPI || [];
-  const shippingValue =
-    shippingCosts &&
-    shippingID &&
-    shippingCosts.filter(
-      shippingProp => shippingProp.shipping_id === shippingID
-    )[0].shipping_cost;
-
   const shippingPrice =
     (shippingCosts &&
       shippingCosts.filter(
@@ -51,7 +44,7 @@ const OrderSummary = props => {
       <Button
         className={classes.confirm}
         onClick={() => {
-          console.log(props);
+          console.log(checkout);
         }}
       >
         Place Order
@@ -88,8 +81,6 @@ const OrderSummary = props => {
     </div>
   );
 };
-
-// export default OrderSummary;
 
 const mapStateToProps = state => {
   const { cart, checkout } = state;

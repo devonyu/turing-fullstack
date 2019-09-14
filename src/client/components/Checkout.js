@@ -122,7 +122,6 @@ const Checkout = props => {
       }
     }
     getShippingApi();
-    console.log("LOADING API DATA");
   }, []);
 
   return (
@@ -195,7 +194,7 @@ const Checkout = props => {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <CheckoutReview
-                    checkout={checkout}
+                    // checkout={checkout}
                     cart={cart}
                     total={total}
                   />
