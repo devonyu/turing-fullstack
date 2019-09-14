@@ -1,4 +1,9 @@
-const initialCheckoutData = { cartData: {}, shippingData: {}, paymentData: {} };
+const initialCheckoutData = {
+  cartData: {},
+  shippingData: {},
+  paymentData: {},
+  shippingAPI: {}
+};
 
 const checkout = (state = initialCheckoutData, action) => {
   if (action.type === "CONFIRMSHIPPING") {
@@ -21,10 +26,20 @@ const checkout = (state = initialCheckoutData, action) => {
 
   if (action.type === "UPDATESHIPPING") {
     console.log("Updating Shipping Selection");
-    console.log(action.shippingUpdate);
+    console.log(action.shippingInput);
     return {
       ...state,
-      shippingData: action.shippingUpdate
+      shippingData: {
+        ...state.shippingData,
+        [action.shippingInput.name]: action.shippingInput.value
+      }
+    };
+  }
+
+  if (action.type === "LOADAPIDATA") {
+    return {
+      ...state,
+      shippingAPI: action.apiData
     };
   }
 

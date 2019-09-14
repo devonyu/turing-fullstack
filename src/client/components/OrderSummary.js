@@ -69,7 +69,7 @@ const OrderSummary = props => {
           : "-"}
       </h3>
       <h3>
-        Estimated tax to be collected (8.5%):
+        Estimated tax to be collected (8.5%):{" "}
         {shippingPrice.shipping_cost
           ? `$${((total + shippingPrice.shipping_cost) * (tax / 100)).toFixed(
               2
@@ -78,7 +78,7 @@ const OrderSummary = props => {
       </h3>
       <Divider />
       <h3>
-        Order total: $
+        Order total:{" "}
         {shippingPrice.shipping_cost
           ? `$${(
               total +

@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import Button from "@material-ui/core/Button";
 // import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
@@ -50,23 +51,24 @@ const Checkout = props => {
   const classes = useStyles();
   const {
     cart,
-    total,
-    confirmShipping,
-    confirmPayment,
-    shipExample,
     cartExample,
     checkout,
-    paymentExample
+    confirmPayment,
+    confirmShipping,
+    loadAPIData,
+    paymentExample,
+    shipExample,
+    total
   } = props;
   const [panelViews, setPanelViews] = React.useState({
     shipping: true,
     payment: false,
     review: false
   });
-  console.log(`%c Shipping INFO`, "color: red");
-  console.log(`%c ${JSON.stringify(checkout.shippingData)}`, "color: red");
-  console.log(`%c Payment INFO`, "color: green");
-  console.log(`%c ${JSON.stringify(checkout.paymentData)}`, "color: green");
+  // console.log(`%c Shipping INFO`, "color: red");
+  // console.log(`%c ${JSON.stringify(checkout.shippingData)}`, "color: red");
+  // console.log(`%c Payment INFO`, "color: green");
+  // console.log(`%c ${JSON.stringify(checkout.paymentData)}`, "color: green");
 
   const panelViewLogic = input => {
     if (input === "shipping") {
@@ -108,6 +110,23 @@ const Checkout = props => {
       </h1>
     );
   };
+
+  React.useEffect(() => {
+    async function getShippingApi() {
+      try {
+        const response = await axios.get("/api/shipping");
+        const { data } = response;
+        loadAPIData({
+          shippingCosts: [...data[0]],
+          shippingRegions: [...data[1]]
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    getShippingApi();
+    console.log("LOADING API DATA");
+  }, []);
 
   return (
     <Paper>
@@ -238,7 +257,8 @@ const mapDispatchToProps = dispatch => {
     confirmShipping: shippingInput =>
       dispatch({ type: "CONFIRMSHIPPING", shippingInput }),
     confirmPayment: paymentInput =>
-      dispatch({ type: "CONFIRMPAYMENT", paymentInput })
+      dispatch({ type: "CONFIRMPAYMENT", paymentInput }),
+    loadAPIData: apiData => dispatch({ type: "LOADAPIDATA", apiData })
   };
 };
 
