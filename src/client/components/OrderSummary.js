@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 // import PropTypes from "prop-types";
@@ -30,39 +29,22 @@ const OrderSummary = props => {
   const classes = useStyles();
   const { cart, checkout, total } = props;
   const tax = 8.5; // fixed for now
-  console.log(checkout);
-  const { shippingID } = checkout.shippingData;
   const { shippingData, shippingAPI } = checkout || {};
-  console.log(shippingAPI);
-  console.log(shippingID);
+  const { shippingID } = shippingData || 0;
   const { shippingCosts } = shippingAPI || [];
-  console.log(shippingCosts);
   const shippingValue =
     shippingCosts &&
+    shippingID &&
     shippingCosts.filter(
       shippingProp => shippingProp.shipping_id === shippingID
     )[0].shipping_cost;
-  // console.log(checkout);
-  console.log(shippingValue);
-  // const [shippingCosts, setShippingCost] = React.useState([]);
-
-  // React.useEffect(() => {
-  //   async function getShippingApi() {
-  //     try {
-  //       const response = await axios.get("/api/shipping");
-  //       const { data } = await response;
-  //       setShippingCost(...data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  //   getShippingApi();
-  // }, []);
 
   const shippingPrice =
-    shippingCosts.filter(
-      shippingCost => shippingCost.shipping_id === shippingID
-    )[0] || {};
+    (shippingCosts &&
+      shippingCosts.filter(
+        shippingCost => shippingCost.shipping_id === shippingID
+      )[0]) ||
+    {};
 
   return (
     <div className={classes.container}>
@@ -79,24 +61,26 @@ const OrderSummary = props => {
       <h3>Items: ${total}</h3>
       <h3>
         Shipping and handling:{" "}
-        {shippingPrice.shipping_cost ? `$${shippingPrice.shipping_cost}` : "-"}
+        {shippingPrice && shippingPrice.shipping_cost
+          ? `$${shippingPrice.shipping_cost}`
+          : "-"}
       </h3>
       <h3>
         Total before tax:{" "}
-        {shippingPrice.shipping_cost
+        {shippingPrice && shippingPrice.shipping_cost
           ? `$${totalBeforeTax(total, shippingPrice.shipping_cost)}`
           : "-"}
       </h3>
       <h3>
         Estimated tax to be collected (8.5%):{" "}
-        {shippingPrice.shipping_cost
+        {shippingPrice && shippingPrice.shipping_cost
           ? `$${taxCollected(total, shippingPrice.shipping_cost, tax)}`
           : "-"}
       </h3>
       <Divider />
       <h3>
         Order total:{" "}
-        {shippingPrice.shipping_cost
+        {shippingPrice && shippingPrice.shipping_cost
           ? `$${orderTotal(total, shippingPrice.shipping_cost, tax)}`
           : "-"}
       </h3>
