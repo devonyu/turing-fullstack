@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import Button from "@material-ui/core/Button";
 // import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
@@ -42,27 +43,54 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // Use Amazon checkout as prototype
-// shipping information
-// display shipping estimate after entered
-// payment information
-// show final cart preview
 // validation and verification/warnings
 // connect to strip api
-// on success, on fail - backend checks
+// on success, on fail - backend checks and error codes
 
 const Checkout = props => {
   const classes = useStyles();
   const {
     cart,
-    total,
-    confirmShipping,
-    confirmPayment,
-    shipExample,
-    cartExample,
     checkout,
-    paymentExample
+    confirmPayment,
+    confirmShipping,
+    loadAPIData,
+    total
   } = props;
-  console.log(cart);
+  const [panelViews, setPanelViews] = React.useState({
+    shipping: true,
+    payment: false,
+    review: false
+  });
+  // console.log(`%c Shipping INFO`, "color: red");
+  // console.log(`%c ${JSON.stringify(checkout.shippingData)}`, "color: red");
+  // console.log(`%c Payment INFO`, "color: green");
+  // console.log(`%c ${JSON.stringify(checkout.paymentData)}`, "color: green");
+
+  const panelViewLogic = input => {
+    if (input === "shipping") {
+      setPanelViews({
+        ...panelViews,
+        shipping: false,
+        payment: true,
+        review: false
+      });
+    } else if (input === "payment") {
+      setPanelViews({
+        ...panelViews,
+        shipping: false,
+        payment: false,
+        review: true
+      });
+    }
+  };
+
+  const togglePannel = input => {
+    setPanelViews({
+      ...panelViews,
+      [input]: !panelViews[input]
+    });
+  };
 
   const cartItemAmount = () => {
     return (
@@ -79,6 +107,23 @@ const Checkout = props => {
       </h1>
     );
   };
+
+  React.useEffect(() => {
+    async function getShippingApi() {
+      try {
+        const response = await axios.get("/api/shipping");
+        const { data } = response;
+        loadAPIData({
+          shippingCosts: [...data[0]],
+          shippingRegions: [...data[1]]
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    getShippingApi();
+  }, []);
+
   return (
     <Paper>
       {cartItemAmount()}
@@ -92,11 +137,14 @@ const Checkout = props => {
         <Grid item xs={8}>
           <Paper className={classes.paper}>
             <div className={classes.root}>
-              <ExpansionPanel>
+              <ExpansionPanel expanded={panelViews.shipping}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  onClick={() => {
+                    togglePannel("shipping");
+                  }}
                 >
                   <Typography className={classes.heading}>
                     1 Shipping Address
@@ -106,14 +154,18 @@ const Checkout = props => {
                   <Shipping
                     checkout={checkout}
                     confirmShipping={confirmShipping}
+                    panelViewLogic={panelViewLogic}
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel>
+              <ExpansionPanel expanded={panelViews.payment}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  onClick={() => {
+                    togglePannel("payment");
+                  }}
                 >
                   <Typography className={classes.heading}>
                     2 Payment method
@@ -123,25 +175,25 @@ const Checkout = props => {
                   <Payments
                     checkout={checkout}
                     confirmPayment={confirmPayment}
+                    panelViewLogic={panelViewLogic}
                   />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel>
+              <ExpansionPanel expanded={panelViews.review}>
                 <ExpansionPanelSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  onClick={() => {
+                    togglePannel("review");
+                  }}
                 >
                   <Typography className={classes.heading}>
                     3 Review items and shipping
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <CheckoutReview
-                    checkout={checkout}
-                    cart={cart}
-                    total={total}
-                  />
+                  <CheckoutReview cart={cart} total={total} />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </div>
@@ -149,7 +201,7 @@ const Checkout = props => {
         </Grid>
         <Grid item xs={4}>
           <Paper className={classes.paper}>
-            <OrderSummary cart={cart} total={total} checkout={checkout} />
+            <OrderSummary cart={cart} total={total} />
           </Paper>
         </Grid>
       </Grid>
@@ -159,27 +211,6 @@ const Checkout = props => {
         }}
       >
         Back to Cart
-      </Button>
-      <Button
-        onClick={() => {
-          shipExample();
-        }}
-      >
-        Redux Add shipping
-      </Button>
-      <Button
-        onClick={() => {
-          paymentExample();
-        }}
-      >
-        Redux Add payment
-      </Button>
-      <Button
-        onClick={() => {
-          cartExample();
-        }}
-      >
-        Redux Add cart
       </Button>
     </Paper>
   );
@@ -191,13 +222,11 @@ const mapDispatchToProps = dispatch => {
     removeFromCart: item => dispatch({ type: "REMOVE", val: item }),
     getCartFromSession: id => dispatch({ type: "LOADSESSION", id }),
     updateCart: (item, id) => dispatch({ type: "UPDATE", val: item, id }),
-    shipExample: () => dispatch({ type: "SHIPPINGEXAMPLE" }),
-    paymentExample: () => dispatch({ type: "PAYMENTEXAMPLE" }),
-    cartExample: () => dispatch({ type: "CARTEXAMPLE" }),
     confirmShipping: shippingInput =>
       dispatch({ type: "CONFIRMSHIPPING", shippingInput }),
     confirmPayment: paymentInput =>
-      dispatch({ type: "CONFIRMPAYMENT", paymentInput })
+      dispatch({ type: "CONFIRMPAYMENT", paymentInput }),
+    loadAPIData: apiData => dispatch({ type: "LOADAPIDATA", apiData })
   };
 };
 

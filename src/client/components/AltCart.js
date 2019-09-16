@@ -1,13 +1,10 @@
-import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import PropTypes from "prop-types";
@@ -17,8 +14,10 @@ import { connect } from "react-redux";
 import AltCartItem from "./AltCartItem";
 
 const useStyles = makeStyles(theme => ({
-  confirm: {
-    backgroundColor: "#f2ca66"
+  formControl: {
+    margin: theme.spacing(1),
+    display: "flex",
+    minWidth: 120
   },
   paper: {
     padding: theme.spacing(1),
@@ -37,8 +36,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const AltCart = props => {
-  const { cart, removeFromCart, total, updateCart } = props;
   const classes = useStyles();
+  const {
+    cart,
+    checkout,
+    removeFromCart,
+    updateCart,
+    updateShippingOption
+  } = props;
+  const { shippingData, shippingAPI } = checkout || {};
   return (
     <Grid
       container
@@ -67,39 +73,35 @@ const AltCart = props => {
       <Grid item xs={4}>
         <Paper className={classes.paper}>
           <h1>Select Shipping</h1>
-          {/* <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel ref={null} htmlFor="shippingOption">
-              Shipping options
-            </InputLabel>
-            <Select
-              value={shippingData.country}
-              onChange={handleChange("country")}
-              inputProps={{
-                name: "country",
-                id: "country"
-              }}
-              error={shippingData.country === 1}
-            >
-              {shippingApi.shippingRegions.map(region => (
-                <MenuItem
-                  value={region.shipping_region_id}
-                  key={region.shipping_region}
-                >
-                  {region.shipping_region}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>Required*</FormHelperText>
-          </FormControl> */}
-          <h2>Subtotal: ${total}</h2>
-          <Button
-            className={classes.confirm}
-            onClick={() => {
-              console.log("Confirm shipping");
-            }}
-          >
-            Confirm Shipping Selection
-          </Button>
+          <>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <Select
+                value={(shippingData && shippingData.shippingID) || ""}
+                onChange={data => updateShippingOption(data.target)}
+                inputProps={{
+                  name: "shippingID",
+                  id: "shippingID"
+                }}
+              >
+                {shippingAPI &&
+                  shippingAPI.shippingCosts &&
+                  shippingAPI.shippingCosts
+                    .filter(
+                      option =>
+                        option.shipping_region_id === shippingData.country
+                    )
+                    .map(filteredShippingOption => (
+                      <MenuItem
+                        value={filteredShippingOption.shipping_id}
+                        key={filteredShippingOption.shipping_id}
+                      >
+                        {filteredShippingOption.shipping_type}
+                      </MenuItem>
+                    ))}
+              </Select>
+              <FormHelperText>Required*</FormHelperText>
+            </FormControl>
+          </>
         </Paper>
       </Grid>
     </Grid>
@@ -110,15 +112,19 @@ const mapDispatchToProps = dispatch => {
   return {
     removeFromCart: item => dispatch({ type: "REMOVE", val: item }),
     updateCart: (item, id) =>
-      dispatch({ type: "UPDATE", val: item, cartItemID: id })
+      dispatch({ type: "UPDATE", val: item, cartItemID: id }),
+    updateShippingOption: shippingInput =>
+      dispatch({ type: "UPDATESHIPPING", shippingInput })
   };
 };
 
 const mapStateToProps = state => {
+  const { cart, checkout } = state;
   return {
-    cart: state.cart.cart,
-    cartID: state.cart.cartID,
-    total: state.cart.total
+    cart: cart.cart,
+    cartID: cart.cartID,
+    checkout,
+    total: cart.total
   };
 };
 
@@ -148,6 +154,5 @@ AltCart.propTypes = {
     })
   ).isRequired,
   removeFromCart: PropTypes.func.isRequired,
-  updateCart: PropTypes.func.isRequired,
-  total: PropTypes.number.isRequired
+  updateCart: PropTypes.func.isRequired
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
@@ -24,42 +23,45 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Shipping = props => {
-  const { confirmShipping } = props;
-  const [shippingData, setShippingData] = React.useState({
-    firstName: "",
-    lastName: "",
-    address1: "",
-    address2: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: 1,
-    shippingID: 0
+const isDirty = state => {
+  return Object.keys(state).every(shippingProp => {
+    if (
+      shippingProp !== "address2" &&
+      shippingProp !== "country" &&
+      shippingProp !== "shippingID"
+    ) {
+      return state[shippingProp].length > 0;
+    }
+    if (shippingProp === "country") {
+      return state[shippingProp] !== 1;
+    }
+    if (shippingProp === "shippingID") {
+      return state[shippingProp] !== 0;
+    }
+    return true;
   });
-  const [shippingApi, setShippingApi] = React.useState({
-    shippingRegions: [],
-    shippingCosts: []
+};
+
+const Shipping = props => {
+  const { confirmShipping, panelViewLogic, checkout } = props;
+  const { shippingAPI } = checkout;
+  const { shippingCosts, shippingRegions } = shippingAPI;
+  const [shippingData, setShippingData] = React.useState({
+    firstName: checkout.shippingData.firstName || "",
+    lastName: checkout.shippingData.lastName || "",
+    address1: checkout.shippingData.address1 || "",
+    address2: checkout.shippingData.address2 || "",
+    city: checkout.shippingData.city || "",
+    state: checkout.shippingData.state || "",
+    zip: checkout.shippingData.zip || "",
+    country: checkout.shippingData.country || 1,
+    shippingID: checkout.shippingData.shippingID || 0
   });
   const [labelWidth, setLabelWidth] = React.useState([...Array(7).keys(null)]);
   const itemsRef = React.useRef([]);
   const classes = useStyles();
 
   React.useEffect(() => {
-    async function getShippingApi() {
-      try {
-        const response = await axios.get("/api/shipping");
-        const { data } = response;
-        setShippingApi({
-          ...shippingApi,
-          shippingCosts: [...data[0]],
-          shippingRegions: [...data[1]]
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getShippingApi();
     const final = [...labelWidth].map((label, idx) => {
       return itemsRef.current[idx].offsetWidth;
     });
@@ -67,9 +69,16 @@ const Shipping = props => {
   }, [shippingData]);
 
   const handleChange = name => event => {
-    setShippingData({ ...shippingData, [name]: event.target.value });
+    if (name === "country") {
+      setShippingData({
+        ...shippingData,
+        [name]: event.target.value,
+        shippingID: 0 // resets shipping value when country changes
+      });
+    } else {
+      setShippingData({ ...shippingData, [name]: event.target.value });
+    }
   };
-
   return (
     <div className={classes.container}>
       {[
@@ -124,14 +133,15 @@ const Shipping = props => {
           }}
           error={shippingData.country === 1}
         >
-          {shippingApi.shippingRegions.map(region => (
-            <MenuItem
-              value={region.shipping_region_id}
-              key={region.shipping_region}
-            >
-              {region.shipping_region}
-            </MenuItem>
-          ))}
+          {shippingRegions &&
+            shippingRegions.map(region => (
+              <MenuItem
+                value={region.shipping_region_id}
+                key={region.shipping_region}
+              >
+                {region.shipping_region}
+              </MenuItem>
+            ))}
         </Select>
         <FormHelperText>Required*</FormHelperText>
       </FormControl>
@@ -147,29 +157,32 @@ const Shipping = props => {
               name: "shippingID",
               id: "shippingID"
             }}
-            error={shippingData.country === 1}
+            error={shippingData.shippingID === 0}
           >
-            {shippingApi.shippingCosts
-              .filter(
-                option => option.shipping_region_id === shippingData.country
-              )
-              .map(filteredShippingOption => (
-                <MenuItem
-                  value={filteredShippingOption.shipping_id}
-                  key={filteredShippingOption.shipping_id}
-                >
-                  {filteredShippingOption.shipping_type}
-                </MenuItem>
-              ))}
+            {shippingCosts &&
+              shippingCosts
+                .filter(
+                  option => option.shipping_region_id === shippingData.country
+                )
+                .map(filteredShippingOption => (
+                  <MenuItem
+                    value={filteredShippingOption.shipping_id}
+                    key={filteredShippingOption.shipping_id}
+                  >
+                    {filteredShippingOption.shipping_type}
+                  </MenuItem>
+                ))}
           </Select>
           <FormHelperText>Required*</FormHelperText>
         </FormControl>
       ) : null}
       <Button
         className={classes.confirm}
+        disabled={!isDirty(shippingData)}
         onClick={() => {
-          console.log("confirm shipping");
+          console.log("confirm shipping clicked");
           confirmShipping(shippingData);
+          panelViewLogic("shipping");
         }}
       >
         Confirm Shipping
