@@ -1,6 +1,7 @@
 const express = require("express");
 const os = require("os");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ connection.query("SELECT 1 + 1 AS solution", (err, rows) => {
 });
 
 const app = express();
+app.use(bodyParser.json());
 
 app.use(express.static("dist"));
 
@@ -81,6 +83,14 @@ app.get("/api/productCategory", (req, res) => {
     if (err) throw err;
     res.json(rows);
   });
+});
+
+// Post data to stripe endpoint
+app.post("/api/stripe", (req, res) => {
+  const { body } = req;
+  body.test = "Data Recieved";
+  body.orderTime = Date.now();
+  res.json(body);
 });
 
 app.listen(process.env.PORT || 8080, () =>

@@ -193,11 +193,7 @@ const Checkout = props => {
                   </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <CheckoutReview
-                    // checkout={checkout}
-                    cart={cart}
-                    total={total}
-                  />
+                  <CheckoutReview cart={cart} total={total} />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </div>

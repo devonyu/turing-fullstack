@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 // import PropTypes from "prop-types";
@@ -39,12 +40,22 @@ const OrderSummary = props => {
       )[0]) ||
     {};
 
+  const placeOrder = () => {
+    const orderData = { ...checkout };
+    orderData.cartData = cart;
+    axios.post("/api/stripe", orderData).then(data => {
+      console.log("backend response from order...");
+      console.log(data);
+    });
+  };
+
   return (
     <div className={classes.container}>
       <Button
         className={classes.confirm}
         onClick={() => {
-          console.log(checkout);
+          console.log("sending checkout info to stripe endpoint");
+          placeOrder();
         }}
       >
         Place Order
