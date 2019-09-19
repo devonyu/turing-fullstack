@@ -85,6 +85,27 @@ app.get("/api/productCategory", (req, res) => {
   });
 });
 
+// Get Discount Code verification
+app.get("/api/discount", (req, res) => {
+  // examplecodes
+  const validCodes = [
+    { code: "friendsandfamily", discount: 10 },
+    { code: "admin", discount: 75 },
+    { code: "test", discount: 25 },
+    { code: "holiday", discount: 30 }
+  ];
+  const { body } = req;
+  let valid = false;
+  if (
+    validCodes.some(code => {
+      return code.code === body.code;
+    })
+  ) {
+    valid = true;
+  }
+  res.send({ discountCodeValid: valid });
+});
+
 // Post data to stripe endpoint
 app.post("/api/stripe", (req, res) => {
   const { body } = req;
