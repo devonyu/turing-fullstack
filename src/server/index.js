@@ -86,7 +86,7 @@ app.get("/api/productCategory", (req, res) => {
 });
 
 // Get Discount Code verification
-app.get("/api/discount", (req, res) => {
+app.post("/api/promo", (req, res) => {
   // examplecodes
   const validCodes = [
     { code: "friendsandfamily", discount: 10 },
@@ -95,15 +95,22 @@ app.get("/api/discount", (req, res) => {
     { code: "holiday", discount: 30 }
   ];
   const { body } = req;
+  console.log("node server recived code:");
+  const { code } = body;
+  console.log(code);
   let valid = false;
+  let discount = 0;
   if (
-    validCodes.some(code => {
-      return code.code === body.code;
+    validCodes.some(codes => {
+      console.log(`MATCHED CODE => ${codes}`);
+      return codes.code === body.code;
     })
   ) {
     valid = true;
+    discount = validCodes.find(codes => codes.code === code).discount;
+    console.log(`discount is ${discount}%`);
   }
-  res.send({ discountCodeValid: valid });
+  res.send({ discountCodeValid: valid, discount });
 });
 
 // Post data to stripe endpoint
